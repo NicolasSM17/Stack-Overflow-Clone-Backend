@@ -27,4 +27,9 @@ public class UserServiceImpl implements IUserService{
 
         return createdUserDTO;
     }
+
+    @Override
+    public boolean hasUserWithEmail(String email) {
+        return userRepository.findFirstByEmail(email).isPresent();
+    }
 }
