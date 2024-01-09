@@ -1,6 +1,8 @@
 package pe.nico.segovia.controllers;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pe.nico.segovia.dtos.AuthenticationRequest;
 import pe.nico.segovia.dtos.AuthenticationResponse;
+import pe.nico.segovia.entities.UserEntity;
+import pe.nico.segovia.repositories.IUserRepository;
 import pe.nico.segovia.utils.JwtUtil;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 public class AuthenticationController {
@@ -29,8 +34,14 @@ public class AuthenticationController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private IUserRepository userRepository;
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+
     @PostMapping("/authenticate")
-    public AuthenticationResponse createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException {
+    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),
                                                                                        authenticationRequest.getPassword()));
@@ -41,8 +52,20 @@ public class AuthenticationController {
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+        Optional<UserEntity> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
-        return new AuthenticationResponse(jwt);
+        if(optionalUser.isPresent()){
+            response.getWriter().write(
+                    new JSONObject()
+                            .put("userId", optionalUser.get().getId())
+                            .toString()
+            );
+        }
+
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.setHeader("Access-Control-Allow-Headers",
+                          "Authorization, X-PINGOTHER, X-Requested-With, Content-Type, Accept, X-Custom-header");
+        response.setHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
     }
 }
