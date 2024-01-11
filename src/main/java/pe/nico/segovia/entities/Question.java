@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import pe.nico.segovia.dtos.QuestionDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -34,4 +35,16 @@ public class Question {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private UserEntity user;
+
+    public QuestionDTO getQuestionDTO(){
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setId(id);
+        questionDTO.setTitle(title);
+        questionDTO.setBody(body);
+        questionDTO.setTags(tags);
+        questionDTO.setUserId(user.getId());
+        questionDTO.setUsername(user.getName());
+
+        return questionDTO;
+    }
 }
