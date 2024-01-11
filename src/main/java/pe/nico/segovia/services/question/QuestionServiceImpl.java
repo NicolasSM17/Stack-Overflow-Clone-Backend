@@ -30,6 +30,7 @@ public class QuestionServiceImpl implements IQuestionService{
             question.setBody(questionDTO.getBody());
             question.setTags(questionDTO.getTags());
             question.setCreatedDate(new Date());
+            question.setUser(optionalUser.get());
 
             Question createdQuestion = questionRepository.save(question);
             QuestionDTO createdQuestionDto = new QuestionDTO();

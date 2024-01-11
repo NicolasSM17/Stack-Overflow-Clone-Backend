@@ -11,13 +11,13 @@ import pe.nico.segovia.dtos.QuestionDTO;
 import pe.nico.segovia.services.question.IQuestionService;
 
 @RestController
-@RequestMapping("/api/question")
+@RequestMapping("/api")
 public class QuestionController {
 
     @Autowired
     private IQuestionService questionService;
 
-    @PostMapping
+    @PostMapping("/question")
     public ResponseEntity<?> postQuestion(@RequestBody QuestionDTO questionDTO){
         QuestionDTO createdQuestionDto = questionService.addQuestion(questionDTO);
 

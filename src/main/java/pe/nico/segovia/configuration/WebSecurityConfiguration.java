@@ -29,6 +29,7 @@ public class WebSecurityConfiguration {
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/sign-up", "/authenticate").permitAll();
+                    auth.requestMatchers("/api/**").authenticated();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
