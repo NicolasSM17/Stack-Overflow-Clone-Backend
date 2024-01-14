@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.nico.segovia.dtos.AllQuestionResponseDTO;
 import pe.nico.segovia.dtos.QuestionDTO;
+import pe.nico.segovia.dtos.SingleQuestionDTO;
 import pe.nico.segovia.services.question.IQuestionService;
 
 @RestController
@@ -31,5 +32,16 @@ public class QuestionController {
         AllQuestionResponseDTO allQuestionResponseDTO = questionService.getAllQuestions(pageNumber);
 
         return ResponseEntity.ok(allQuestionResponseDTO);
+    }
+
+    @GetMapping("/question/{questionId}")
+    public ResponseEntity<?> getQuestionById(@PathVariable Long questionId){
+        SingleQuestionDTO singleQuestionDto = questionService.getQuestionById(questionId);
+
+        if(singleQuestionDto == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(singleQuestionDto);
     }
 }

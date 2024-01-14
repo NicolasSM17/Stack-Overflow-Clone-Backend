@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.nico.segovia.dtos.AllQuestionResponseDTO;
 import pe.nico.segovia.dtos.QuestionDTO;
+import pe.nico.segovia.dtos.SingleQuestionDTO;
 import pe.nico.segovia.entities.Question;
 import pe.nico.segovia.entities.UserEntity;
 import pe.nico.segovia.repositories.IQuestionRepository;
@@ -61,5 +62,15 @@ public class QuestionServiceImpl implements IQuestionService{
         allQuestionResponseDTO.setTotalPages(questionPage.getTotalPages());
 
         return allQuestionResponseDTO;
+    }
+
+    @Override
+    public SingleQuestionDTO getQuestionById(Long questionId) {
+        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+        SingleQuestionDTO singleQuestionDto = new SingleQuestionDTO();
+
+        optionalQuestion.ifPresent(question -> singleQuestionDto.setQuestionDto(question.getQuestionDTO()));
+
+        return singleQuestionDto;
     }
 }
