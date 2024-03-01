@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import pe.nico.segovia.dtos.AnswerDTO;
 
 import java.util.Date;
 
@@ -35,4 +36,16 @@ public class Answer {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Question question;
+
+    public AnswerDTO getAnswerDto(){
+        AnswerDTO answerDTO = new AnswerDTO();
+        answerDTO.setId(id);
+        answerDTO.setBody(body);
+        answerDTO.setCreatedDate(createdDate);
+        answerDTO.setUserId(user.getId());
+        answerDTO.setUsername(user.getName());
+        answerDTO.setQuestionId(question.getId());
+
+        return answerDTO;
+    }
 }

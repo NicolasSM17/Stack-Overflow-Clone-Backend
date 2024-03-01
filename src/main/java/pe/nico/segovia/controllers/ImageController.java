@@ -16,7 +16,7 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @PostMapping("/image/answerId")
+    @PostMapping("/image/{answerId}")
     public ResponseEntity<String> uploadFile(@RequestParam MultipartFile multipartFile, @PathVariable Long answerId){
         try{
             imageService.storeFile(multipartFile, answerId);

@@ -18,6 +18,7 @@ public class Image {
     private String type;
 
     @Lob
+    @Column(length = 50000000)
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

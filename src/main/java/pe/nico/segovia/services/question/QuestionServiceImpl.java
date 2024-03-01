@@ -6,14 +6,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pe.nico.segovia.dtos.AllQuestionResponseDTO;
+import pe.nico.segovia.dtos.AnswerDTO;
 import pe.nico.segovia.dtos.QuestionDTO;
 import pe.nico.segovia.dtos.SingleQuestionDTO;
+import pe.nico.segovia.entities.Answer;
 import pe.nico.segovia.entities.Question;
 import pe.nico.segovia.entities.UserEntity;
+import pe.nico.segovia.repositories.IAnswerRepository;
 import pe.nico.segovia.repositories.IQuestionRepository;
 import pe.nico.segovia.repositories.IUserRepository;
+import pe.nico.segovia.repositories.ImageRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,6 +31,12 @@ public class QuestionServiceImpl implements IQuestionService{
 
     @Autowired
     private IQuestionRepository questionRepository;
+
+    @Autowired
+    private IAnswerRepository answerRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     public static final int SEARCH_RESULT_PER_PAGE = 5;
 
@@ -67,10 +79,24 @@ public class QuestionServiceImpl implements IQuestionService{
     @Override
     public SingleQuestionDTO getQuestionById(Long questionId) {
         Optional<Question> optionalQuestion = questionRepository.findById(questionId);
-        SingleQuestionDTO singleQuestionDto = new SingleQuestionDTO();
 
-        optionalQuestion.ifPresent(question -> singleQuestionDto.setQuestionDto(question.getQuestionDTO()));
+        if(optionalQuestion.isPresent()){
+            SingleQuestionDTO singleQuestionDTO = new SingleQuestionDTO();
+            List<AnswerDTO> answerDTOList = new ArrayList<>();
+            singleQuestionDTO.setQuestionDto(optionalQuestion.get().getQuestionDTO());
+            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
 
-        return singleQuestionDto;
+            for(Answer answer : answerList){
+                AnswerDTO answerDTO = answer.getAnswerDto();
+                answerDTO.setFile(imageRepository.findByAnswer(answer));
+                answerDTOList.add(answerDTO);
+            }
+
+            singleQuestionDTO.setAnswerDTOList(answerDTOList);
+
+            return singleQuestionDTO;
+        }
+
+        return null;
     }
 }
