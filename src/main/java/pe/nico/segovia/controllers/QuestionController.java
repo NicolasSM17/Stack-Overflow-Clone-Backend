@@ -44,4 +44,11 @@ public class QuestionController {
 
         return ResponseEntity.ok(singleQuestionDto);
     }
+
+    @GetMapping("/questions/{userId}/{pageNumber}")
+    public ResponseEntity<AllQuestionResponseDTO> getQuestionsByUserId(@PathVariable Long userId, @PathVariable int pageNumber){
+        AllQuestionResponseDTO allQuestionResponseDTO = questionService.getQuestionByUserId(userId, pageNumber);
+
+        return ResponseEntity.ok(allQuestionResponseDTO);
+    }
 }

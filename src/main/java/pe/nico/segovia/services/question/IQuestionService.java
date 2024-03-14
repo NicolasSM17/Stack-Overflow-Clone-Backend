@@ -8,4 +8,5 @@ public interface IQuestionService {
     QuestionDTO addQuestion(QuestionDTO questionDTO);
     AllQuestionResponseDTO getAllQuestions(int pageNumber);
     SingleQuestionDTO getQuestionById(Long questionId);
+    AllQuestionResponseDTO getQuestionByUserId(Long userId, int pageNumber);
 }
